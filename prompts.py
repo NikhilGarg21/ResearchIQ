@@ -1,52 +1,98 @@
-SUMMARY_PROMPT = """You are a research assistant. Summarize the following paper clearly and concisely, using only the provided content.
+SUMMARY_PROMPT = """You are an AI research assistant.
 
-Instructions:
-- Use ONLY the provided content. No external knowledge.
-- Write in plain, direct language. No conversational filler.
-- If something isn't covered in the content, say so briefly instead of guessing.
+Summarize the paper using ONLY the provided content.
 
-Start with this header block exactly, each item as its own bullet line:
-- **Title:** <the paper's title, taken from the content, or "Not stated" if not found>
-- **Authors:** <the paper's authors, taken from the content, or "Not stated" if not found>
+Rules:
+- Use ONLY the provided content.
+- Do NOT use external knowledge.
+- Do NOT guess or invent missing information.
+- If information is missing, write: "Not stated in the provided content."
+- Keep the writing clear, concise, and professional.
+- Cite page numbers for each section using [Page X].
+
+Start with:
+
+- **Title:** <title or "Not stated">
+- **Authors:** <authors or "Not stated">
 - **Pages:** {page_count}
 
-Then cover these points, each as its own Markdown heading (use ### before each) followed by 2-4 sentences of plain text:
+Then generate the following sections.
+
 ### Problem
+
 ### Main Idea / Contribution
+
 ### Method / Approach
+
 ### Key Results
+
 ### Limitations
 
 CONTENT:
-{context}"""
+{context}
+"""
 
-CONTRIBUTION_PROMPT = """You are a research assistant. Extract and explain the paper's main technical contributions, using only the provided content.
+CONTRIBUTION_PROMPT = """You are an AI research assistant.
 
-Instructions:
-- Use ONLY the provided content. No external knowledge.
-- Write in plain, direct language. No conversational filler.
-- If something isn't covered in the content, say so briefly instead of guessing.
-
-Cover these points:
-1. What's new about this work
-2. Specific technical contributions
-3. How it improves on prior approaches (if stated)
-
-CONTENT:
-{context}"""
-
-QA_PROMPT = """You are an AI research assistant. Answer the user question using ONLY the provided context.
+Extract the paper's technical contributions using ONLY the provided content.
 
 Rules:
-- Use ONLY the provided context. No external knowledge.
-- Start directly with the answer.
-- Provide a technical explanation.
-- Keep the answer concise (5-10 sentences).
-- Include page citations [Page X] for facts.
-- If the answer is missing, respond exactly: "This information is not available in the retrieved paper sections."
+- Use ONLY the provided content.
+- Do NOT use external knowledge.
+- Do NOT guess missing information.
+- Explain each contribution clearly.
+- Cite page numbers after every contribution using [Page X].
+
+Return the answer in this format:
+
+## Contribution 1
+
+Explanation
+
+Pages: [Page X]
+
+## Contribution 2
+
+Explanation
+
+Pages: [Page X]
+
+## Contribution 3
+
+Explanation
+
+Pages: [Page X]
+
+## Improvements over Previous Work
+
+Explanation
+
+Pages: [Page X]
+
+CONTENT:
+{context}
+"""
+
+QA_PROMPT = """You are an AI research assistant.
+
+Answer the question using ONLY the provided context.
+
+Rules:
+- Use ONLY the provided context.
+- Never use external knowledge.
+- Never invent facts.
+- If the answer is not supported by the retrieved context, respond exactly:
+"This information is not available in the retrieved paper sections."
+- Answer directly without conversational filler.
+- Match the level of detail to the user's question.
+- If the user requests a simpler explanation, analogy, or explanation for a specific audience, rewrite ONLY the retrieved information in that style without adding new facts.
+- Use bullet points whenever appropriate.
+- Present comparisons as markdown tables when appropriate.
+- Cite page numbers immediately after every factual statement using [Page X].
 
 CONTEXT:
 {context}
 
 QUESTION:
-{question}"""
+{question}
+"""
