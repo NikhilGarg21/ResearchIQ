@@ -65,12 +65,22 @@ if uploaded_file is not None:
             loader = PyMuPDFLoader("temp.pdf")
             docs = loader.load()
             chunks = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200).split_documents(docs)
+
+            if not chunks:
+                st.session_state["uploaded_file_id"] = None
+                st.error(
+                    "Couldn't extract any text from this PDF. It may be a scanned "
+                    "or image-only document (no selectable text layer). Try a "
+                    "different PDF, or one that's been OCR-processed."
+                )
+                st.stop()
+
             vectorstore = create_vectorstore(chunks, HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"))
             st.session_state.update({
                 "docs": docs,
                 "retriever": vectorstore.as_retriever(search_type="mmr", search_kwargs={"k": 8})
             })
-        st.rerun()
+            st.rerun()
 
 
 if st.session_state.docs:

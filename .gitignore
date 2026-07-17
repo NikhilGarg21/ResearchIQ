@@ -5,8 +5,11 @@ build/
 dist/
 wheels/
 *.egg-info
+temp.pdf
+vectorstrore/
 
 # Virtual environments
 .venv
 
+#API KEY
 .env
